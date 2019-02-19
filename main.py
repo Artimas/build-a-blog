@@ -64,7 +64,7 @@ def newpost():
         new_blog = Blog(new_blog, body, owner)
         db.session.add(new_blog)
         db.session.commit()
-        return redirect("/")        
+        return redirect("/blogpost?id={}".format(new_blog.id))        
     return render_template("newpost.html")
 
 @app.route('/register', methods = ["POST", "GET"])
