@@ -45,19 +45,26 @@ def require_login():
 @app.route("/", methods=["POST", "GET"])
 def index():
     owner = User.query.filter_by(email=session["email"]).first()
-
-    if request.method == "POST":
-        new_blog = request.form["title"]
-        body = request.form["body"]
-        new_blog = Blog(new_blog, body, owner)
-        db.session.add(new_blog)
-        db.session.commit()
+        
 
     blogs = Blog.query.filter_by(deleted=False, owner=owner).all()
     return render_template("blog.html", title="Build-a-blog", blogs=blogs)
 
 @app.route("/newpost", methods = ["POST", "GET"])
 def newpost():
+    if request.method == "POST":
+        owner = User.query.filter_by(email=session["email"]).first()
+        title = request.form["title"]
+        blog = request.form["body"]
+        if title == "" or blog == "":
+            flash("Please enter a title and a blog")
+            return redirect("/newpost") 
+        new_blog = request.form["title"]
+        body = request.form["body"]
+        new_blog = Blog(new_blog, body, owner)
+        db.session.add(new_blog)
+        db.session.commit()
+        return redirect("/")        
     return render_template("newpost.html")
 
 @app.route('/register', methods = ["POST", "GET"])
